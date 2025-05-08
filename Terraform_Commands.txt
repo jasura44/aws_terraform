@@ -1,0 +1,13 @@
+terraform init
+
+terraform plan -out
+
+terraform apply -f
+
+terraform apply -auto-approve
+
+terraform apply-target=resource_type.resource_name
+
+terraform apply -refresh-only
+
+terraform destroy

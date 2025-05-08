@@ -137,9 +137,9 @@ resource "aws_security_group" "alb_sg" {
 resource "aws_security_group" "rds_sg" {
   vpc_id = aws_vpc.main.id
   ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
   egress {
@@ -185,18 +185,18 @@ resource "aws_lb_listener" "listener" {
 
 # RDS Instance
 resource "aws_db_instance" "rds" {
-  allocated_storage    = 20
-  engine               = "mysql"
-  engine_version       = "8.0"
-  instance_class       = "db.t3.micro"
-  db_name                 = "mydb"
-  username             = "admin"
-  password             = "Jasura$$44" # Replace with a secure password
-  parameter_group_name = "default.mysql8.0"
-  publicly_accessible  = false
+  allocated_storage      = 20
+  engine                 = "mysql"
+  engine_version         = "8.0"
+  instance_class         = "db.t3.micro"
+  db_name                = "mydb"
+  username               = "admin"
+  password               = "Jasura$$44" # Replace with a secure password
+  parameter_group_name   = "default.mysql8.0"
+  publicly_accessible    = false
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
-  db_subnet_group_name = aws_db_subnet_group.rds_subnet_group.name
-  skip_final_snapshot  = true
+  db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
+  skip_final_snapshot    = true
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
@@ -213,7 +213,7 @@ resource "aws_launch_template" "web_template" {
   image_id      = "ami-0e8ebb0ab254bb563" # Replace with a valid Amazon Linux 2 AMI ID
   instance_type = "t2.micro"
 
-  user_data = "${base64encode(file("${path.module}/script.sh"))}" # Path to your user data script
+  user_data = base64encode(file("${path.module}/script.sh")) # Path to your user data script
 
   network_interfaces {
     associate_public_ip_address = true
@@ -239,13 +239,13 @@ resource "aws_autoscaling_group" "web_asg" {
   min_size            = 2
   max_size            = 2
   desired_capacity    = 2
-  
-  target_group_arns = [aws_lb_target_group.tg.arn]  # Attach to the target group
+
+  target_group_arns = [aws_lb_target_group.tg.arn] # Attach to the target group
   health_check_type = "ELB"
 
   tag {
-      key                 = "Name"
-      value               = "web-instance"
-      propagate_at_launch = true
-    }
+    key                 = "Name"
+    value               = "web-instance"
+    propagate_at_launch = true
+  }
 }
